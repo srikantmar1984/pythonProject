@@ -1,0 +1,20 @@
+#BlueJ class context
+comment0.target=Booking
+comment1.params=args
+comment1.target=void\ main(java.lang.String[])
+comment1.text=\r\n\ An\ example\ of\ a\ method\ -\ replace\ this\ comment\ with\ your\ own\r\n\r\n\ @param\ \ y\ \ a\ sample\ parameter\ for\ a\ method\r\n\ @return\ \ \ \ the\ sum\ of\ x\ and\ y\r\n
+comment2.params=
+comment2.target=void\ menu()
+comment3.params=
+comment3.target=void\ findTrains()
+comment4.params=indx
+comment4.target=void\ Train_details(int)
+comment5.params=boardStation\ destStation\ indx\ noOfPassender
+comment5.target=void\ calculateFare(java.lang.String,\ java.lang.String,\ int,\ int)
+comment6.params=
+comment6.target=void\ reservation()
+comment7.params=indx
+comment7.target=void\ checkAvailibility(int)
+comment8.params=
+comment8.target=void\ booking_details()
+numComments=9
