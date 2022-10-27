@@ -7,7 +7,10 @@
  */
 import java.util.*;
 import java.util.Scanner;
-public class Booking extends Train
+import java.lang.*;
+import java.io.*;
+
+public class Booking
 {
     // instance variables - replace the example below with your own
     static String[]  TrainNo = {"12814" , "12809", "12261", "12138" ,"22222"};
@@ -15,8 +18,8 @@ public class Booking extends Train
     static String[] StationBoard = {"TATA JN", "HOWRAH JN", "HOWRAH JN", "AMRITSAR JN","MUMBAI JN"};
     static String[] destination = {"HOWRAH JN", "MUMBAI JN", "PUNE JN", "TATA JN","NEW DELHI JN"};
     static String[] coach_No = {"S1", "S2", "S3", "S4","S5","S6", "S7", "S8", "S9","S10"};
-    static int[][] pnr = new int[50][]; // 5 trains for 10 dates =50 and 99 seats for 10 coaches = 990
-    static String[][] passengerDtls = new int[50][];
+    static String[] pnr_main = new String[0]; // 5 trains for 10 dates =50 and for initation of seats 0
+    static String[] ticket_dtls = new String[0];
     static int seat_count = 990;
     static String[][] dateAvlSeat_t1 = new String[10][seat_count];
     static String[][] dateAvlSeat_t2 = new String[10][seat_count];
@@ -135,7 +138,7 @@ public class Booking extends Train
         int ind = trnSelct-1;
         Train_details(ind);
     }
-    static void calculateFare(String boardStation,String destStation,int indx,int noOfPassender){
+    static int calculateTrainFare(String boardStation,String destStation,int indx){
         int fare = base_fare;
         int ticket_dist = 0;
         for (int c=1; c<trainStopages[indx].length;c++)
@@ -147,7 +150,8 @@ public class Booking extends Train
         }
         System.out.println("\n Distance : "+ ticket_dist);
         fare =  (fare+(km10_fare*(ticket_dist/10))+reserv_charge);
-        System.out.println("\n Fare : Rs "+ (noOfPassender* fare));
+        System.out.println("\n Fare : Rs "+ fare);
+        return fare;
     }
    
     static void checkAvailibility (int indx){
@@ -184,32 +188,33 @@ public class Booking extends Train
             int seat_booked = 0;
             String[][] arr = new String[10][990];
             switch(indx){
-                case 1: arr =dateAvlSeat_t1;break;
-                case 2: arr =dateAvlSeat_t2;break;
-                case 3: arr =dateAvlSeat_t3;break;
-                case 4: arr =dateAvlSeat_t4;break;
-                default: arr =dateAvlSeat_t5;break;
+                case 1: seat_booked =dateAvlSeat_t1[journeyDateSlno].length;break;
+                case 2: seat_booked =dateAvlSeat_t2[journeyDateSlno].length;break;
+                case 3: seat_booked =dateAvlSeat_t3[journeyDateSlno].length;break;
+                case 4: seat_booked =dateAvlSeat_t4[journeyDateSlno].length;break;
+                default: seat_booked =dateAvlSeat_t5[journeyDateSlno].length;break;
             }
             
-            for (int s=0; s < arr[journeyDateSlno].length;s++)
-            {
-                if(arr[indx][s] == null){
+            // for (int s=0; s < arr[journeyDateSlno].length;s++)
+            // {
+                // System.out.println(arr[journeyDateSlno][s]);
+                // // if(arr[indx][s] == null){
                     
-                    break;
-                }
-                else{
-                    seat_booked++;
-                }
-            }
+                    // // break;
+                // // }
+                // // else{
+                    // // seat_booked++;
+                // // }
+            // }
             int avlSeat = 990-seat_booked;
-            System.out.println("\n No of seats Avalable:"+ avlSeat);
-            calculateFare(StationBoard[boardingStationSlno],destination[destStationSlno],indx,1);
+            System.out.println("\n No of seats avalable:"+ avlSeat);
+            int fare = calculateTrainFare(trainStopages[indx][boardingStationSlno],trainStopages[indx][destStationSlno],indx);
             
             System.out.println("\n Do you want to book a ticket? Enter YES Or NO");
             String bookTicket = myObj.next();
             
             if(bookTicket.equalsIgnoreCase("YES")) {
-                reservation(indx,boardingStationSlno,destStationSlno,journeyDateSlno,avlSeat);
+                reservation(indx,boardingStationSlno,destStationSlno,journeyDateSlno,avlSeat,fare);
             }
             
             if(bookTicket.equalsIgnoreCase("NO")) {
@@ -218,33 +223,29 @@ public class Booking extends Train
             
         }
     }
-    static void reservation(int trainSlNo,int bStationSlno,int dStationSlno,int jDateSlno,int avlSeat)
+    static void reservation(int trainSlNo,int bStationSlno,int dStationSlno,int jDateSlno,int avlSeat, int fare)
     {
-        String passnger[];
+        
         System.out.println("\n Please enter number of seat required : ");
         int noOfSeat = myObj.nextInt();
+       
         if(noOfSeat>0){
-            
+            String[][] passnger = new String[noOfSeat][3];
             if(avlSeat>noOfSeat   ){
                 for (int n=0; n < noOfSeat;n++)
                 {
-                    System.out.println("\n Please enter Passenger Name: ");
-                    String passName = myObj.next();
-                    System.out.println("\n Please enter Passenger Age: ");
-                    int passAge = myObj.nextInt();
-                    System.out.println("\n Please enter Passenger Gender code; M for Male & F for Female: ");
-                    String passGend = myObj.next();
-                    passengerDtls[n]={passName, passAge,passGend};
-                    
+                    System.out.println("\n Enter Name of passenger"+(n+1)+": ");
+                    passnger[n][0] = myObj.next();
+                    System.out.println("\n Enter Age of passenger"+(n+1)+": ");
+                    passnger[n][1] = myObj.next();
+                    System.out.println("\n Enter Gender of passenger"+(n+1)+"[code M for Male & F for Female] : ");
+                    passnger[n][2] = myObj.next();
+                       
                 }
-                 pnr=bookticket(trainSlNo,bStationSlno,dStationSlno, jDateSlno,passnger[][]);
-                // switch(trainSlNo){
-                        // case 1:break;
-                        // case 2: bookticket(dateAvlSeat_t2,trainSlNo,bStationSlno,dStationSlno, jDateSlno, passName, passAge,passGend);break;
-                        // case 3: bookticket(dateAvlSeat_t3,trainSlNo,bStationSlno,dStationSlno, jDateSlno, passName, passAge,passGend);break;
-                        // case 4: bookticket(dateAvlSeat_t4,trainSlNo,bStationSlno,dStationSlno, jDateSlno, passName, passAge,passGend);break;
-                        // default: bookticket(dateAvlSeat_t5,trainSlNo,bStationSlno,dStationSlno, jDateSlno, passName, passAge,passGend);break;
-                    // }
+                String pnr=bookticket(trainSlNo,bStationSlno-1,dStationSlno-1,fare, jDateSlno-1,passnger);
+                System.out.println("\nTicket Booked successfully with PNR No:"+pnr);
+                
+                
             }else{
                 System.out.println("\n Warning....!Avaliable seat is lower than the required seats: ");
                 
@@ -252,8 +253,50 @@ public class Booking extends Train
         }
         
     }
-    static String bookticket( int trainSlNo,int bStationSlno,int dStationSlno,int jDateSlno,String passName,int passAge,String passGend){
-        String ticketString
+    static String bookticket( int trainSlNo,int bStationSlno,int dStationSlno, int fare,int jDateSlno,String[][] passengerDtls){
+        int p_cnt = passengerDtls.length;
+        String new_pnr_no= String.valueOf(jDateSlno)+String.valueOf(trainSlNo)+String.valueOf(bStationSlno)
+        +String.valueOf(dStationSlno)+String.valueOf(passengerDtls.length)+String.format("%03d", pnr_main.length);
+        pnr_main= add_pnr(pnr_main.length, pnr_main,new_pnr_no );
+        
+        String ticket_print="************************* TRAIN TICKET *************************";
+        ticket_print+="\nPNR NO : "+new_pnr_no;
+        ticket_print+="\n****************************************************************";
+        ticket_print+="\nTrain No : "+TrainName[trainSlNo];
+        ticket_print+="\nDate of Journey : "+trainDates[trainSlNo][jDateSlno];
+        ticket_print+="\nBording Station : "+trainStopages[jDateSlno][bStationSlno];
+        ticket_print+="\t Destination Station : "+trainStopages[jDateSlno][dStationSlno];
+        ticket_print+="\n---- Passenger Details -----------------------------------------";
+        ticket_print+="\n|S.No|"+String.format("%-30s","Passenger Name")+"|Age \t |Gender|";
+        for(int p=0; p<p_cnt; p++){
+            ticket_print+="\n|"+String.format("%4s",(p+1))+"| "+String.format("%-30s",passengerDtls[p][0])+"|"+passengerDtls[p][1]+" \t |"+passengerDtls[p][2]+"|";  
+            String singlePassDetails = passengerDtls[p][0]+":"+passengerDtls[p][1]+":"+passengerDtls[p][2];
+            switch(trainSlNo){
+                        case 1  : dateAvlSeat_t1[jDateSlno][dateAvlSeat_t1.length] =singlePassDetails ;
+                        System.out.println(dateAvlSeat_t1.length);break;
+                        case 2  : dateAvlSeat_t2[jDateSlno][dateAvlSeat_t2.length] =singlePassDetails ;
+                        System.out.println(dateAvlSeat_t2.length);break;
+                        case 3  : dateAvlSeat_t3[jDateSlno][dateAvlSeat_t3.length] =singlePassDetails ;
+                        System.out.println(dateAvlSeat_t3.length);break;
+                        case 4  : dateAvlSeat_t4[jDateSlno][dateAvlSeat_t4.length] =singlePassDetails ;
+                        System.out.println(dateAvlSeat_t4.length);break;
+                        default : dateAvlSeat_t5[jDateSlno][dateAvlSeat_t5.length] =singlePassDetails ;
+                        System.out.println(dateAvlSeat_t5.length);break;
+                    } 
+        }
+        ticket_print+="\n----------------------------------------------------------------";
+        ticket_print+="\n---- Fare Breakup ----------------------------------------------";
+        ticket_print+="\n| Fare : "+fare+"\t\t No of passenger(s) : "+ p_cnt+" |";
+        
+        double tax = (fare*p_cnt)*0.1;
+        double p_fare = fare*p_cnt+tax;
+        ticket_print+="\n| Passenger fare : "+fare*p_cnt+"\t\t Tax on Fare : "+tax +" |";
+        ticket_print+="\n\n| Total fare : "+p_fare+"\t\t\t\t\t |";
+        
+        ticket_dtls= add_tickets(ticket_dtls.length,ticket_dtls,ticket_print);
+            
+        System.out.println("\n"+ticket_print);       
+        return new_pnr_no;
     }
     static void ticketBooking(){
         
@@ -262,6 +305,26 @@ public class Booking extends Train
     {
         // put your code here
         System.out.println("booking_details");
+        for(int p=0; p<ticket_dtls.length; p++){
+            System.out.println(ticket_dtls[p]);
+        }
     }
-    
+    public static String[] add_pnr(int n, String[] pnr, String pnrStr)
+       {
+       // create a new PNR array of size n+1
+       String newPNR[] = new String[n + 1];
+       for (int i = 0; i < n; i++)
+           newPNR[i] = pnr[i];
+       newPNR[n] = pnrStr;
+       return newPNR;
+       }
+    public static String[] add_tickets(int t, String[] ticket_dtls, String ticketStr)
+       {
+       // create a new PNR array of size n+1
+       String newTicketArr[] = new String[t + 1];
+       for (int j = 0; j < t; j++)
+           newTicketArr[j] = ticket_dtls[j];
+       newTicketArr[t] = ticketStr;
+       return newTicketArr;
+       }
 }
